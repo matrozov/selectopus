@@ -16,6 +16,37 @@ module.exports = function (grunt) {
             }
         },
 
+        concat: {
+            main: {
+                files: {
+                    'dist/js/selectopus.js': [
+                        'src/js/selectopus.js'
+                    ],
+                    'dist/js/selectopus.full.js': [
+                        'src/js/selectopus.js',
+                        'src/js/i18n/*.js'
+                    ]
+                }
+            }
+        },
+
+        cssmin: {
+            target: {
+                files: {
+                    'dist/css/selectopus.min.css': 'src/css/selectopus.css'
+                }
+            }
+        },
+
+        uglify: {
+            dev: {
+                files: {
+                    'dist/js/selectopus.min.js': 'src/js/selectopus.js',
+                    'dist/js/selectopus.full.min.js': 'dist/js/selectopus.full.js'
+                }
+            }
+        },
+
         copy: {
             main: {
                 files: [
@@ -36,36 +67,20 @@ module.exports = function (grunt) {
                         cwd: 'src/css',
                         src: 'selectopus.css',
                         dest: 'dist/css/'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'dist/js',
+                        src: 'selectopus.full.min.js',
+                        dest: 'docs/js/'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'dist/css',
+                        src: 'selectopus.min.css',
+                        dest: 'docs/css/'
                     }
                 ]
-            }
-        },
-
-        concat: {
-            main: {
-                files: {
-                    'dist/js/selectopus.full.js': [
-                        'src/js/selectopus.js',
-                        'src/js/i18n/*.js'
-                    ]
-                }
-            }
-        },
-
-        cssmin: {
-            target: {
-                files: {
-                    'dist/css/selectopus.min.css': 'dist/css/selectopus.css'
-                }
-            }
-        },
-
-        uglify: {
-            dev: {
-                files: {
-                    'dist/js/selectopus.min.js': 'dist/js/selectopus.js',
-                    'dist/js/selectopus.full.min.js': 'dist/js/selectopus.full.js'
-                }
             }
         }
     });

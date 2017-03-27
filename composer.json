@@ -1,0 +1,22 @@
+{
+    "name": "matrozov/selectopus",
+    "description": "Selectopus is a jQuery based replacement for select boxes.",
+    "type": "component",
+    "homepage": "https://matrozov.github.io/selectopus/",
+    "license": "MIT",
+    "extra": {
+        "component": {
+            "scripts": [
+                "dist/js/selectopus.min.js"
+            ],
+            "styles": [
+                "dist/css/selectopus.min.css"
+            ],
+            "files": [
+                "dist/js/selectopus.min.js",
+                "dist/js/i18n/*.js",
+                "dist/css/selectopus.min.css"
+            ]
+        }
+    }
+}

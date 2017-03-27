@@ -4,8 +4,8 @@
             items: {},
             value: [],
 
-            options: {},
             languages: {},
+            options: {},
 
             $element: false,
 
@@ -18,8 +18,8 @@
                 self.$element = $element;
                 self.$element.hide();
 
-                self.options   = $.extend({}, $.fn.selectopus.default, self.optionsPredefined(), options);
                 self.languages = $.fn.selectopus.languages;
+                self.options   = $.extend({}, $.fn.selectopus.default, self.optionsPredefined(), options);
 
                 self.create();
 
@@ -51,6 +51,7 @@
                 self.$input = $('<input>')
                     .attr('type', 'text')
                     .addClass('selectopus-popup-input form-control input-sm')
+                    .keyup(self.onPopupSearch)
                     .appendTo(self.$popup);
 
                 self.$popupItems = $('<ul>')
@@ -64,8 +65,7 @@
                 var result = {
                     multiple: self.$element.is('[multiple]'),
                     items: {},
-                    value: [],
-                    language: $('html').attr('lang')
+                    value: []
                 };
 
                 self.$element.find('option').each(function() {
@@ -85,11 +85,17 @@
                     }
                 });
 
+                var language = $('html').attr('lang');
+
+                if (self.languageExists(language)) {
+                    result.language = language;
+                }
+
                 return result;
             },
 
-            languageExists: function(lang) {
-                return typeof(self.languages[lang]) !== 'undefined';
+            languageExists: function(language) {
+                return typeof(self.languages[language]) !== 'undefined';
             },
 
             languageGet: function(key) {
@@ -125,15 +131,17 @@
                 self.$popupItems.empty();
             },
 
-            popupItemsCreate: function() {
+            popupItemsCreate: function(search) {
                 self.popupItemsClear();
 
-                $.each(self.items, function(value, title) {
-                    self.popupItemCreate(value);
+                self.items = self.options.onSearch(self, search);
+
+                $.each(self.items, function(value) {
+                    self.popupItemCreate(value, search);
                 });
             },
 
-            popupItemCreate: function(value) {
+            popupItemCreate: function(value, search) {
                 var selected = self.value.indexOf(value) > -1;
 
                 if (selected && (self.options.popupSelectedMode === 'hide')) {
@@ -142,7 +150,7 @@
 
                 var $item = $('<li>')
                     .addClass('selectopus-popup-item')
-                    .html(self.options.onRenderPopupItem(self.public, value, self.items[value]))
+                    .html(self.options.onRenderPopupItem(self.public, value, self.items[value], search))
                     .data('value', value)
                     .click(self.onPopupItemClick)
                     .appendTo(self.$popupItems);
@@ -232,6 +240,17 @@
                 return false;
             },
 
+            onPopupSearch: function() {
+                var search = self.$input.val().trim();
+
+                if (search.length > 0) {
+                    self.popupItemsCreate(search);
+                }
+                else {
+                    self.popupItemsCreate();
+                }
+            },
+
             public: {
                 get options() {
                     return self.options;
@@ -314,6 +333,18 @@
                     self.$popup.hide();
 
                     self.popupItemsClear();
+                },
+
+                markup: function(text, search) {
+                    if ((typeof(text) !== 'string') || (typeof(search) === 'undefined') || (search.trim().length === 0)) {
+                        return text;
+                    }
+
+                    var regexp = new RegExp(search.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&"), 'gi');
+
+                    return text.replace(regexp, function(s) {
+                        return '<mark>' + s + '</mark>';
+                    });
                 }
             }
         };
@@ -346,12 +377,25 @@
         multiple: false, // Allow multiple select
 
         popupSelectedMode: 'highlite', // highlite/hide
-        popupSearchHighlight: true,
-        bla: true,
+        popupSearchHighlight: true, // highlite match result
         popupCloseAfterSelect: true, // Close popup after select item
 
-        onSearch: function(selectopus, value) {
-            return selectopus.options.items;
+        onSearch: function(selectopus, search) {
+            if ((typeof(search) === 'undefined') || (search.trim().length === 0)) {
+                return selectopus.options.items;
+            }
+
+            var items = {};
+
+            $.each(selectopus.options.items, function(value, title) {
+                if (title.indexOf(search) === -1) {
+                    return;
+                }
+
+                items[value] = title;
+            });
+
+            return items;
         },
         onSelect: function(selectopus, value) {
             return true;
@@ -362,7 +406,11 @@
         onRenderItem: function(selectopus, value, title) {
             return title;
         },
-        onRenderPopupItem: function(selectopus, value, title) {
+        onRenderPopupItem: function(selectopus, value, title, search) {
+            if (selectopus.options.popupSearchHighlight) {
+                title = selectopus.markup(title, search);
+            }
+
             return title;
         }
     };
