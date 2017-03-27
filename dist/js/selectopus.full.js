@@ -373,3 +373,15 @@
 
     $.fn.selectopus.languages = {};
 })(jQuery);
+(function($) {
+    $.fn.selectopus.languages.en = {
+        popupSearchPlaceholder: 'Start type for search items...',
+        popupSearchNotFound: 'No results found'
+    };
+})(jQuery);
+(function($) {
+    $.fn.selectopus.languages.ru = {
+        popupSearchPlaceholder: 'Начните писать, что бы найти элементы...',
+        popupSearchNotFound: 'Совпадений не найдено'
+    };
+})(jQuery);

@@ -1,0 +1,47 @@
+{
+    "name": "Selectopus",
+    "description": "Selectopus is a jQuery based replacement for select boxes. It supports searching and remote data sets.",
+    "homepage": "https://matrozov.github.io/selectopus/",
+    "author": {
+        "name": "Oleg Matrozov",
+        "url": "https://github.com/matrozov"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/matrozov/selectopus.git"
+    },
+    "bugs": {
+        "url": "https://github.com/matrozov/selectopus/issues"
+    },
+    "keywords": [
+        "select",
+        "autocomplete",
+        "typeahead",
+        "dropdown",
+        "multiselect",
+        "tag",
+        "tagging"
+    ],
+    "license": "MIT",
+    "main": "dist/js/select2.js",
+    "files": [
+        "src",
+        "dist"
+    ],
+    "version": "1.0.0",
+    "jspm": {
+        "main": "js",
+        "directories": {
+            "lib": "dist"
+        }
+    },
+    "devDependencies": {
+        "grunt": "~0.4.5",
+        "grunt-contrib-uglify": "~0.5.0",
+        "grunt-contrib-copy": "~1.0.0",
+        "grunt-contrib-cssmin": "~2.0.0"
+    },
+    "dependencies": {
+
+    }
+}

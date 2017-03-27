@@ -22,10 +22,10 @@
                 self.languages = $.fn.selectopus.languages;
 
                 self.create();
+                self.languageReload();
 
-                self.public.language = self.options.language;
-                self.public.items    = self.options.items;
-                self.public.value    = self.options.value;
+                self.public.items(self.options.items);
+                self.public.value(self.options.value);
 
                 self.itemsCreate();
             },
@@ -64,8 +64,7 @@
                 var result = {
                     multiple: self.$element.is('[multiple]'),
                     items: {},
-                    value: [],
-                    language: $('html').attr('lang')
+                    value: []
                 };
 
                 self.$element.find('option').each(function() {
@@ -86,10 +85,6 @@
                 });
 
                 return result;
-            },
-
-            languageExists: function(lang) {
-                return typeof(self.languages[lang]) !== 'undefined';
             },
 
             languageGet: function(key) {
@@ -171,7 +166,7 @@
 
                 if (self.options.onUnselect(self, value)) {
                     self.value.splice(index, 1);
-                    self.public.value = self.value;
+                    self.public.value(self.value);
                 }
 
                 self.public.popupClose();
@@ -210,17 +205,17 @@
                 if (index > -1) {
                     if (self.options.onUnselect(self, value)) {
                         self.value.splice(index, 1);
-                        self.public.value = self.value;
+                        self.public.value(self.value);
                     }
                 }
                 else {
                     if (self.options.onSelect(self, value)) {
                         if (self.options.multiple) {
                             self.value.push(value);
-                            self.public.value = self.value;
+                            self.public.value(self.value);
                         }
                         else {
-                            self.public.value = value;
+                            self.public.value(value);
                         }
                     }
                 }
@@ -242,7 +237,7 @@
                 },
 
                 set language(value) {
-                    if (!self.languageExists(value)) {
+                    if (typeof(self.languages[value]) === 'undefined') {
                         return;
                     }
 
@@ -251,35 +246,35 @@
                     self.languageReload();
                 },
 
-                get items() {
+                items: function(items) {
+                    if (typeof(items) !== 'undefined') {
+                        self.items = items;
+                    }
+
                     return self.items;
                 },
 
-                set items(value) {
-                    self.items = value;
-                },
+                value: function(value) {
+                    if (typeof(value) !== 'undefined') {
+                        if (self.options.multiple) {
+                            if ($.isArray(value)) {
+                                self.value = value;
+                            }
+                        }
+                        else {
+                            self.value = [value];
+                        }
 
-                get value() {
+                        self.itemsCreate();
+                        self.saveValue();
+                    }
+
                     if (self.options.multiple) {
                         return self.value;
                     }
                     else {
                         return self.value[0];
                     }
-                },
-
-                set value(value) {
-                    if (self.options.multiple) {
-                        if ($.isArray(value)) {
-                            self.value = value;
-                        }
-                    }
-                    else {
-                        self.value = [value];
-                    }
-
-                    self.itemsCreate();
-                    self.saveValue();
                 },
 
                 isPopupOpened: function() {
@@ -305,8 +300,6 @@
                     self.$popup.css('top', bound.bottom);
 
                     self.$popup.show();
-
-                    self.$popupItems.scrollTop(0);
                     self.$input.focus();
                 },
 
