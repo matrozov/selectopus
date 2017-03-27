@@ -490,7 +490,20 @@
                 return selectopus.options.items;
             }
 
-            return selectopus.options.items;
+            var items = {};
+
+            try {
+                items = $.getJSON(selectopus.options.url + search);
+            }
+            catch (e) {
+                items = {};
+            }
+
+            if (!$.isPlainObject(items)) {
+                items = {};
+            }
+
+            return items;
         },
         onSearch: function(selectopus, search) {
             if (!selectopus.options.popupSearchHide || (typeof(search) === 'undefined') || (search.trim().length === 0)) {
