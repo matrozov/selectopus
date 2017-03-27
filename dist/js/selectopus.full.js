@@ -11,8 +11,10 @@
 
             $root: false,
             $items: false,
-            $input: false,
             $popup: false,
+            $popupInput: false,
+            $popupItems: false,
+            $popupHint: false,
 
             init: function($element, options) {
                 self.$element = $element;
@@ -48,7 +50,7 @@
                     .addClass('selectopus-popup')
                     .appendTo('body');
 
-                self.$input = $('<input>')
+                self.$popupInput = $('<input>')
                     .attr('type', 'text')
                     .addClass('selectopus-popup-input form-control input-sm')
                     .keyup(self.view.popup.onSearch)
@@ -56,6 +58,10 @@
 
                 self.$popupItems = $('<ul>')
                     .addClass('selectopus-popup-items')
+                    .appendTo(self.$popup);
+
+                self.$popupHint = $('<div>')
+                    .addClass('selectopus-popup-hint')
                     .appendTo(self.$popup);
 
                 $(document).click(self.view.popup.onClose);
@@ -114,7 +120,7 @@
                 },
 
                 reload: function() {
-                    self.$input.attr('placeholder', self.language.translate('popupSearchPlaceholder'));
+                    self.$popupInput.attr('placeholder', self.language.translate('popupSearchPlaceholder'));
                 }
             },
 
@@ -234,12 +240,26 @@
                             $.each(self._items, function(value) {
                                 self.view.popup.items.create(value, search);
                             });
+
+                            if (self.$popupItems.children().length === 0) {
+                                if ((typeof(search) !== 'undefined') && (search.trim().length > 0)) {
+                                    self.$popupHint.text(self.language.translate('popupSearchNotFound'));
+                                }
+                                else {
+                                    self.$popupHint.text(self.language.translate('popupEmpty'));
+                                }
+
+                                self.$popupHint.show();
+                            }
+                            else {
+                                self.$popupHint.hide();
+                            }
                         },
 
                         create: function(value, search) {
                             var selected = self.value.exists(value);
 
-                            if (selected && (self._options.popupSelectedMode === 'hide')) {
+                            if (selected && (self._options.popupHideSelected)) {
                                 return;
                             }
 
@@ -315,7 +335,7 @@
                         self.$popup.show();
 
                         self.$popupItems.scrollTop(0);
-                        self.$input.val('').focus();
+                        self.$popupInput.val('').focus();
                     },
 
                     close: function() {
@@ -349,7 +369,7 @@
                     },
 
                     onSearch: function() {
-                        var search = self.$input.val().trim();
+                        var search = self.$popupInput.val().trim();
 
                         if (search.length > 0) {
                             self.view.popup.items.createList(search);
@@ -478,7 +498,7 @@
         language: 'en',
         multiple: false, // Allow multiple select
 
-        popupSelectedMode: 'highlite', // highlite/hide
+        popupHideSelected: false, // hide selected items (or only hightlite by default)
         popupSearchHide: true, // hide not matched items
         popupSearchHighlight: true, // highlight match items
         popupCloseAfterSelect: true, // Close popup after select item
@@ -548,13 +568,15 @@
 })(jQuery);
 (function($) {
     $.fn.selectopus.languages.en = {
+        popupEmpty: 'Empty list!',
         popupSearchPlaceholder: 'Start type for search items...',
-        popupSearchNotFound: 'No results found'
+        popupSearchNotFound: 'No results found!'
     };
 })(jQuery);
 (function($) {
     $.fn.selectopus.languages.ru = {
+        popupEmpty: 'Список пуст!',
         popupSearchPlaceholder: 'Начните писать, что бы найти элементы...',
-        popupSearchNotFound: 'Совпадений не найдено'
+        popupSearchNotFound: 'Совпадений не найдено!'
     };
 })(jQuery);

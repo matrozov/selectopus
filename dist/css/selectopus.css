@@ -56,3 +56,9 @@
 .selectopus-popup-item.selectopus-popup-item-selected:hover {
     background: #cde;
 }
+.selectopus-popup-hint {
+    display: none;
+    color: #aaa;
+    padding: 2px 5px;
+    margin: -3px;
+}
