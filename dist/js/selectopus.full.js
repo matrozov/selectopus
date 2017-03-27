@@ -237,11 +237,23 @@
                             self._items = self._options.onLoad(self.public, search);
                             self._items = self._options.onSearch(self.public, search);
 
-                            $.each(self._items, function(value) {
+                            var items = {};
+
+                            $.each(self._items, function(value, title){
+                                var selected = self.value.exists(value);
+
+                                if (selected && (self._options.popupHideSelected)) {
+                                    return;
+                                }
+
+                                items[value] = title;
+                            });
+
+                            $.each(items, function(value) {
                                 self.view.popup.items.create(value, search);
                             });
 
-                            if (self.$popupItems.children().length === 0) {
+                            if ($.isEmptyObject(items)) {
                                 if ((typeof(search) !== 'undefined') && (search.trim().length > 0)) {
                                     self.$popupHint.text(self.language.translate('popupSearchNotFound'));
                                 }
@@ -257,13 +269,7 @@
                         },
 
                         create: function(value, search) {
-                            var selected = self.value.exists(value);
-
-                            if (selected && (self._options.popupHideSelected)) {
-                                return;
-                            }
-
-                            var content = self._options.onRenderPopupItem(self.public, value, self.items.get(value), search);
+                            var content  = self._options.onRenderPopupItem(self.public, value, self.items.get(value), search);
 
                             var $item = $('<li>')
                                 .addClass('selectopus-popup-item')
@@ -272,7 +278,7 @@
                                 .click(self.view.popup.items.onClick)
                                 .appendTo(self.$popupItems);
 
-                            if (selected) {
+                            if (self.value.exists(value)) {
                                 $item.addClass('selectopus-popup-item-selected');
                             }
                         },
