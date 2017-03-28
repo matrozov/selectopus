@@ -27,12 +27,11 @@
 
                 <nav class="collapse navbar-collapse select2-navbar-collapse" role="navigation">
                     <ul class="nav navbar-nav">
-                        <li>
-                            <a href="#example">Examples</a>
-                        </li>
-                        <li>
-                            <a href="#options">Options</a>
-                        </li>
+                        <li><a href="#example">Examples</a></li>
+                        <li><a href="#options">Options</a></li>
+                        <li><a href="#events">Events</a></li>
+                        <li><a href="#properties">Properties</a></li>
+                        <li><a href="#functions">Functions</a></li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
@@ -131,14 +130,11 @@
                 <div class="col-sm-4">
                     <p>
                         <select id="example-source-2" class="selectopus">
-                            <option>value 1</option>
-                            <option selected>value 2</option>
-                            <option>value 3</option>
                         </select>
                     </p>
                     <p>
-                        <button onClick="$('#example-source-2').selectopus().items = {'value 1.1':'value 1.1','value 1.2':'value 1.2','value 1.3':'value 1.3'}; return false;">List 1</button>
-                        <button onClick="$('#example-source-2').selectopus().items = {'value 2.1':'value 2.1','value 2.2':'value 2.2','value 2.3':'value 2.3'}; return false;">List 2</button>
+                        <button onClick="$('#example-source-2').selectopus().items = {'value 1.1':'value 1.1','value 1.2':'value 1.2','value 1.3':'value 1.3'}; $('#example-source-2').selectopus().popup.open(); event.stopPropagation();">List 1</button>
+                        <button onClick="$('#example-source-2').selectopus().items = {'value 2.1':'value 2.1','value 2.2':'value 2.2','value 2.3':'value 2.3'}; $('#example-source-2').selectopus().popup.open(); event.stopPropagation();">List 2</button>
                     </p>
                 </div>
                 <div class="col-sm-4">
@@ -190,47 +186,68 @@
                         </select>
                     </p>
                     <p>
-                        <button onClick="$('#example-lang-3').selectopus().language = 'en'; return false;">En</button>
-                        <button onClick="$('#example-lang-3').selectopus().language = 'ru'; return false;">Ru</button>
+                        <button onClick="$('#example-lang-3').selectopus().language = 'en'; $('#example-lang-3').selectopus().popup.open(); event.stopPropagation();">En</button>
+                        <button onClick="$('#example-lang-3').selectopus().language = 'ru'; $('#example-lang-3').selectopus().popup.open(); event.stopPropagation();">Ru</button>
                     </p>
                 </div>
             </div>
 
             <a name="options"></a><h2>Options</h2>
 
+            <pre>
+$('select').selectopus({
+    <a href="#options-items">items</a>: {},
+    <a href="#options-value">value</a>: [],
+
+    <a href="#options-language">language</a>: 'en',
+    <a href="#options-multiple">multiple</a>: false,
+
+    <a href="#options-popupHideSelected">popupHideSelected</a>: false,
+    <a href="#options-popupSearchHide">popupSearchHide</a>: true,
+    <a href="#options-popupSearchHighlight">popupSearchHighlight</a>: true,
+    <a href="#options-popupCloseAfterSelect">popupCloseAfterSelect</a>: true,
+
+    <a href="#options-url">url</a>: false,
+
+    <a href="#options-onLoad">onLoad</a>: function(selectopus, search, callback) {},
+    <a href="#options-onSearch">onSearch</a>: function(selectopus, search) {},
+    <a href="#options-onRenderItem">onRenderItem</a>: function(selectopus, value, title) {},
+    <a href="#options-onRenderPopupItem">onRenderPopupItem</a>: function(selectopus, value, title, search) {}
+});</pre>
+
             <table class="table table-border">
                 <tr>
-                    <th class="col-sm-5">Property</th>
+                    <th class="col-sm-5">Option</th>
                     <th>Type</th>
                     <th>Default</th>
                     <th>Comment</th>
                 </tr>
                 <tr>
-                    <td>items</td>
+                    <td><a name="options-items"></a>items</td>
                     <td>object</td>
                     <td>{}</td>
                     <td>Items</td>
                 </tr>
                 <tr>
-                    <td>value</td>
+                    <td><a name="options-value"></a>value</td>
                     <td>array</td>
                     <td>[]</td>
                     <td>Value or list of values</td>
                 </tr>
                 <tr>
-                    <td>language</td>
+                    <td><a name="options-language"></a>language</td>
                     <td>string</td>
                     <td>en</td>
                     <td>Language</td>
                 </tr>
                 <tr>
-                    <td>multiple</td>
+                    <td><a name="options-multiple"></a>multiple</td>
                     <td>bool</td>
                     <td>false</td>
                     <td>Multiple mode</td>
                 </tr>
                 <tr>
-                    <td>popupHideSelected</td>
+                    <td><a name="options-popupHideSelected"></a>popupHideSelected</td>
                     <td>bool</td>
                     <td>false</td>
                     <td>Hide selected items from popup
@@ -238,7 +255,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>popupSearchHide</td>
+                    <td><a name="options-popupSearchHide"></a>popupSearchHide</td>
                     <td>bool</td>
                     <td>true</td>
                     <td>Hide not matched items
@@ -246,19 +263,19 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>popupSearchHighlight</td>
+                    <td><a name="options-popupSearchHighlight"></a>popupSearchHighlight</td>
                     <td>bool</td>
                     <td>true</td>
                     <td>Hightlite math items</td>
                 </tr>
                 <tr>
-                    <td>popupCloseAfterSelect</td>
+                    <td><a name="options-popupCloseAfterSelect"></a>popupCloseAfterSelect</td>
                     <td>bool</td>
                     <td>true</td>
                     <td>Close popup after select</td>
                 </tr>
                 <tr>
-                    <td>url</td>
+                    <td><a name="options-url"></a>url</td>
                     <td>string</td>
                     <td>false</td>
                     <td>Ajax source url
@@ -266,7 +283,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>onLoad (selectopus, search, callback)</td>
+                    <td><a name="options-onLoad"></a>onLoad (selectopus, search, callback)</td>
                     <td>closure</td>
                     <td></td>
                     <td>Load data from source (static or ajax)
@@ -274,19 +291,19 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>onSearch (selectopus, search)</td>
+                    <td><a name="options-onSearch"></a>onSearch (selectopus, search)</td>
                     <td>closure</td>
                     <td></td>
                     <td>Find and match search</td>
                 </tr>
                 <tr>
-                    <td>onSelect (selectopus, value)</td>
+                    <td><a name="options-onSelect"></a>onSelect (selectopus, value)</td>
                     <td>closure</td>
                     <td></td>
                     <td>Call, when value selected</td>
                 </tr>
                 <tr>
-                    <td>onUnselect (selectopus, value)</td>
+                    <td><a name="options-onUnselect"></a>onUnselect (selectopus, value)</td>
                     <td>closure</td>
                     <td></td>
                     <td>Call, when value unselected
@@ -294,22 +311,123 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>onRenderItem (selectopus, value, title)</td>
+                    <td><a name="options-onRenderItem"></a>onRenderItem (selectopus, value, title)</td>
                     <td>closure</td>
                     <td></td>
                     <td>Render item</td>
                 </tr>
                 <tr>
-                    <td>onRenderPopupItem (selectopus, value, title)</td>
+                    <td><a name="options-onRenderPopupItem"></a>onRenderPopupItem (selectopus, value, title)</td>
                     <td>closure</td>
                     <td></td>
                     <td>Render popup item</td>
+                </tr>
+            </table>
+
+            <a name="events"></a><h2>Events</h2>
+
+            <pre>
+$('select').on('<a href="#events-select">selectopus-select</a>', function(value) {});
+$('select').on('<a href="#events-unselect">selectopus-unselect</a>', function(value) {});
+$('select').on('<a href="#events-change">selectopus-change</a>', function() {});</pre>
+
+            <table class="table table-border">
+                <tr>
+                    <th class="col-sm-5">Event</th>
+                    <th>Comment</th>
+                </tr>
+                <tr>
+                    <td><a name="events-select"></a>selectopus-select</td>
+                    <td>Value selected</td>
+                </tr>
+                <tr>
+                    <td><a name="events-unselect"></a>selectopus-unselect</td>
+                    <td>Value unselected</td>
+                </tr>
+                <tr>
+                    <td><a name="events-change"></a>selectopus-change</td>
+                    <td>Values changed</td>
+                </tr>
+            </table>
+
+            <a name="properties"></a><h3>Properties</h3>
+
+            <pre>
+$('select').selectopus().<a href="#property-options">options</a>;
+$('select').selectopus().<a href="#property-language">language</a>;
+$('select').selectopus().<a href="#property-items">items</a>;
+$('select').selectopus().<a href="#property-value">value</a>;
+$('select').selectopus().<a href="#property-popup-isOpened">popup.isOpened</a>;</pre>
+
+            <table class="table table-border">
+                <tr>
+                    <th class="col-sm-5">Property</th>
+                    <th>Comment</th>
+                </tr>
+                <tr>
+                    <td><a name="property-options"></a>options</td>
+                    <td>Allow view current options (read only)</td>
+                </tr>
+                <tr>
+                    <td><a name="property-language"></a>language</td>
+                    <td>Set/Get selectopus language</td>
+                </tr>
+                <tr>
+                    <td><a name="property-items"></a>items</td>
+                    <td>Set/Get items</td>
+                </tr>
+                <tr>
+                    <td><a name="property-value"></a>value</td>
+                    <td>Set/Get current value(s)</td>
+                </tr>
+                <tr>
+                    <td><a name="property-popup-isOpened"></a>popup.isOpened</td>
+                    <td>Get popup visible state (read only)</td>
+                </tr>
+            </table>
+
+            <a name="functions"></a><h3>Functions</h3>
+
+            <pre>
+$('select').selectopus().<a href="#function-popup-toggle">popup.toggle</a>();
+$('select').selectopus().<a href="#function-popup-show">popup.show</a>();
+$('select').selectopus().<a href="#function-popup-hide">popup.hide</a>();
+$('select').selectopus().<a href="#function-utils-match">utils.match</a>(text, search);
+$('select').selectopus().<a href="#function-utils-markup">utils.markup</a>(text, search);</pre>
+
+            <table class="table table-border">
+                <tr>
+                    <th class="col-sm-5">Property</th>
+                    <th>Comment</th>
+                </tr>
+                <tr>
+                    <td><a name="function-popup-toggle"></a>popup.toggle()</td>
+                    <td>Toggle popup visibility</td>
+                </tr>
+                <tr>
+                    <td><a name="function-popup-show"></a>popup.show()</td>
+                    <td>Show popup</td>
+                </tr>
+                <tr>
+                    <td><a name="function-popup-hide"></a>popup.hide()</td>
+                    <td>Hide popup</td>
+                </tr>
+                <tr>
+                    <td><a name="function-utils-match"></a>utils.match(text, search)</td>
+                    <td>Find "search" in "text"</td>
+                </tr>
+                <tr>
+                    <td><a name="function-utils-markup"></a>utils.markup(text, search)</td>
+                    <td>Return markup "text" with &lt;mark&gt; tag around "search"</td>
                 </tr>
             </table>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
-        <script src="js/selectopus.full.min.js"></script>
+        <!--<script src="js/selectopus.full.min.js"></script>-->
+        <script src="../src/js/selectopus.js"></script>
+        <script src="../src/js/i18n/en.js"></script>
+        <script src="../src/js/i18n/ru.js"></script>
     </body>
 </html>

@@ -209,10 +209,18 @@
 
                 add: function(value) {
                     self._value[value] = self.items.exists(value) ? self.items.get(value) : self.value.get(value);
+
+                    self.$element.trigger('selectopus-select', value);
+                    self.$element.trigger('selectopus-change');
+                    self.$element.trigger('change');
                 },
 
                 remove: function(value) {
                     delete self._value[value];
+
+                    self.$element.trigger('selectopus-unselect', value);
+                    self.$element.trigger('selectopus-change');
+                    self.$element.trigger('change');
                 },
 
                 get: function(value) {
@@ -258,12 +266,13 @@
 
                         var value = $(this).data('value');
 
-                        if (self._options.onUnselect(self.public, value)) {
+                        if (self.value.exists(value)) {
                             self.value.remove(value);
                             self.value.save();
+
+                            self.view.items.createList();
                         }
 
-                        self.view.items.createList();
                         self.view.popup.close();
 
                         return false;
@@ -331,20 +340,16 @@
                             var value = $(this).data('value');
 
                             if (self._options.multiple && self.value.exists(value)) {
-                                if (self._options.onUnselect(self.public, value)) {
-                                    self.value.remove(value);
-                                    self.value.save();
-                                }
+                                self.value.remove(value);
+                                self.value.save();
                             }
                             else {
-                                if (self._options.onSelect(self.public, value)) {
-                                    if (!self._options.multiple) {
-                                        self.value.clear();
-                                    }
-
-                                    self.value.add(value);
-                                    self.value.save();
+                                if (!self._options.multiple) {
+                                    self.value.clear();
                                 }
+
+                                self.value.add(value);
+                                self.value.save();
                             }
 
                             if (self._options.popupCloseAfterSelect) {
@@ -394,9 +399,15 @@
                     },
 
                     close: function() {
+                        if (!self.view.popup.isOpened) {
+                            return;
+                        }
+
                         self.$popup.hide();
 
                         self.view.popup.items.clear();
+
+                        self._search = '';
                     },
 
                     onToggle: function() {
@@ -412,25 +423,23 @@
                     },
 
                     onClose: function(event) {
+                        if (!self.view.popup.isOpened) {
+                            return true;
+                        }
+
                         var $target = $(event.target);
 
                         if ($target[0] === self.$popup[0]) {
-                            return false;
+                            return true;
                         }
 
                         var $parent = $target.parents('.selectopus-popup:first');
 
-                        if ($parent.length === 0) {
+                        if (($parent.length > 0) && ($parent[0] === self.$popup[0])) {
                             return true;
                         }
 
-                        if ($parent[0] === self.$popup[0]) {
-                            return false;
-                        }
-
                         self.view.popup.close();
-
-                        self._search = '';
 
                         return false;
                     },
@@ -611,12 +620,6 @@
             });
 
             return items;
-        },
-        onSelect: function(selectopus, value) {
-            return true;
-        },
-        onUnselect: function(selectopus, value) {
-            return true;
         },
         onRenderItem: function(selectopus, value, title) {
             return title;
