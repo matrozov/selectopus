@@ -201,7 +201,9 @@
                 save: function() {
                     self.$element.empty();
 
-                    $.each(self._value, function(key, value) {
+                    self.$element.attr('multiple', self._options.multiple);
+
+                    $.each(self._value, function(value, title) {
                         $('<option>')
                             .attr('selected', true)
                             .text(value)
@@ -496,10 +498,10 @@
 
                 get value() {
                     if (self._options.multiple) {
-                        return self.value;
+                        return self.value.keys();
                     }
                     else {
-                        return self.value[0];
+                        return self.value.keys()[0];
                     }
                 },
 
