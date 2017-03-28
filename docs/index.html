@@ -203,8 +203,9 @@ $('select').selectopus({
     <a href="#options-multiple">multiple</a>: false,
 
     <a href="#options-popupHideSelected">popupHideSelected</a>: false,
-    <a href="#options-popupSearchHide">popupSearchHide</a>: true,
-    <a href="#options-popupSearchHighlight">popupSearchHighlight</a>: true,
+    <a href="#options-popupSearchBar">popupSearchBar</a>: true,
+    <a href="#options-popupSearchHideItem">popupSearchHideItem</a>: true,
+    <a href="#options-popupSearchHighlightItem">popupSearchHighlightItem</a>: true,
     <a href="#options-popupCloseAfterSelect">popupCloseAfterSelect</a>: true,
 
     <a href="#options-url">url</a>: false,
@@ -255,7 +256,13 @@ $('select').selectopus({
                     </td>
                 </tr>
                 <tr>
-                    <td><a name="options-popupSearchHide"></a>popupSearchHide</td>
+                    <td><a name="options-popupSearchBar"></a>popupSearchBar</td>
+                    <td>bool</td>
+                    <td>true</td>
+                    <td>Show search bar in popup window</td>
+                </tr>
+                <tr>
+                    <td><a name="options-popupSearchHideItem"></a>popupSearchHideItem</td>
                     <td>bool</td>
                     <td>true</td>
                     <td>Hide not matched items
@@ -263,10 +270,10 @@ $('select').selectopus({
                     </td>
                 </tr>
                 <tr>
-                    <td><a name="options-popupSearchHighlight"></a>popupSearchHighlight</td>
+                    <td><a name="options-popupSearchHighlightItem"></a>popupSearchHighlightItem</td>
                     <td>bool</td>
                     <td>true</td>
-                    <td>Hightlite math items</td>
+                    <td>Hightlite match items</td>
                 </tr>
                 <tr>
                     <td><a name="options-popupCloseAfterSelect"></a>popupCloseAfterSelect</td>

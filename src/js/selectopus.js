@@ -58,6 +58,10 @@
                     .keyup(self.view.popup.onSearch)
                     .appendTo(self.$popup);
 
+                if (!self._options.popupSearchBar) {
+                    self.$popupInput.hide();
+                }
+
                 self.$popupItems = $('<ul>')
                     .addClass('selectopus-popup-items')
                     .appendTo(self.$popup);
@@ -116,7 +120,7 @@
                     }
                 });
 
-                var data_bool = ['multiple', 'popupHideSelected', 'popupSearchHide', 'popupSearchHighlight', 'popupCloseAfterSelect'];
+                var data_bool = ['multiple', 'popupHideSelected', 'popupSearchBar', 'popupSearchHideItem', 'popupSearchHighlightItem', 'popupCloseAfterSelect'];
 
                 $.each(data_bool, function(idx, key) {
                     var value = $element.data(key);
@@ -577,9 +581,12 @@
         language: 'en',
         multiple: false, // Allow multiple select
 
-        popupHideSelected: false, // hide selected items (or only hightlite by default)
-        popupSearchHide: true, // hide not matched items
-        popupSearchHighlight: true, // highlight match items
+        popupHideSelected: false, // Hide selected items (or only hightlite by default)
+
+        popupSearchBar: true, // Show search bar
+        popupSearchHideItem: true, // Hide not matched items
+        popupSearchHighlightItem: true, // Highlight match items
+
         popupCloseAfterSelect: true, // Close popup after select item
 
         url: false, // Url for ajax load, example: http://example.com?text=
@@ -605,7 +612,7 @@
             }
         },
         onSearch: function(selectopus, search) {
-            if (!selectopus.options.popupSearchHide || (typeof(search) === 'undefined') || (search.trim().length === 0)) {
+            if (!selectopus.options.popupSearchHideItem || (typeof(search) === 'undefined') || (search.trim().length === 0)) {
                 return selectopus.items;
             }
 
@@ -625,7 +632,7 @@
             return title;
         },
         onRenderPopupItem: function(selectopus, value, title, search) {
-            if (selectopus.options.popupSearchHighlight) {
+            if (selectopus.options.popupSearchHighlightItem) {
                 title = selectopus.utils.markup(title, search);
             }
 
