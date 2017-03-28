@@ -7,6 +7,8 @@
             _languages: {},
             _options: {},
 
+            _search: '',
+
             $element: false,
 
             $root: false,
@@ -34,7 +36,8 @@
 
             create: function() {
                 self.$root = $('<div>')
-                    .addClass('selectopus-root')
+                    .addClass('selectopus-root form-control')
+                    .click(self.view.popup.onToggle)
                     .insertAfter(self.$element);
 
                 if (self._options.multiple) {
@@ -42,8 +45,7 @@
                 }
 
                 self.$items = $('<div>')
-                    .addClass('selectopus-items form-control')
-                    .click(self.view.popup.onToggle)
+                    .addClass('selectopus-items clearfix')
                     .appendTo(self.$root);
 
                 self.$popup = $('<div>')
@@ -231,11 +233,11 @@
 
                 popup: {
                     items: {
-                        createList: function(search) {
+                        createList: function() {
                             self.view.popup.items.clear();
 
-                            self._items = self._options.onLoad(self.public, search);
-                            self._items = self._options.onSearch(self.public, search);
+                            self._items = self._options.onLoad(self.public, self._search);
+                            self._items = self._options.onSearch(self.public, self._search);
 
                             var items = {};
 
@@ -250,11 +252,11 @@
                             });
 
                             $.each(items, function(value) {
-                                self.view.popup.items.create(value, search);
+                                self.view.popup.items.create(value, self._search);
                             });
 
                             if ($.isEmptyObject(items)) {
-                                if ((typeof(search) !== 'undefined') && (search.trim().length > 0)) {
+                                if (self._search.length > 0) {
                                     self.$popupHint.text(self.language.translate('popupSearchNotFound'));
                                 }
                                 else {
@@ -268,8 +270,8 @@
                             }
                         },
 
-                        create: function(value, search) {
-                            var content  = self._options.onRenderPopupItem(self.public, value, self.items.get(value), search);
+                        create: function(value) {
+                            var content  = self._options.onRenderPopupItem(self.public, value, self.items.get(value), self._search);
 
                             var $item = $('<li>')
                                 .addClass('selectopus-popup-item')
@@ -309,6 +311,9 @@
                             if (self._options.popupCloseAfterSelect) {
                                 self.view.popup.close();
                             }
+                            else {
+                                self.view.popup.items.createList();
+                            }
 
                             self.view.items.createList();
 
@@ -332,7 +337,7 @@
                     open: function() {
                         self.view.popup.items.createList();
 
-                        var bound = self.$items[0].getBoundingClientRect();
+                        var bound = self.$root[0].getBoundingClientRect();
 
                         self.$popup.css('width', bound.width);
                         self.$popup.css('left', bound.left);
@@ -375,10 +380,10 @@
                     },
 
                     onSearch: function() {
-                        var search = self.$popupInput.val().trim();
+                        self._search = self.$popupInput.val().trim();
 
-                        if (search.length > 0) {
-                            self.view.popup.items.createList(search);
+                        if (self._search.length > 0) {
+                            self.view.popup.items.createList();
                         }
                         else {
                             self.view.popup.items.createList();

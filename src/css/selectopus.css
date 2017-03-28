@@ -1,16 +1,18 @@
-.selectopus-input {
-    border: 0;
-    margin: 0;
-    padding: 0;
-    outline: 0;
-    min-width: 50px;
-    max-width: 100px;
+.selectopus-root {
+    min-height: 34px;
+    height: auto;
+    overflow: hidden;
+}
+.selectopus-items {
+    margin: -4px;
 }
 .selectopus-item {
-    margin-right: 5px;
+    margin: 1px;
     user-select: none;
+    white-space: nowrap;
 }
 .selectopus-multiple .selectopus-item {
+    float: left;
     background: #eee;
     border: 1px solid #ddd;
     border-radius: 4px;
