@@ -119,7 +119,7 @@
                     }
                 });
 
-                var data_bool = ['multiple', 'popupHideSelected', 'popupSearchBar', 'popupSearchHideItem', 'popupSearchHighlightItem', 'popupCloseAfterSelect'];
+                var data_bool = ['multiple', 'popupHideSelected', 'popupSearchBar', 'popupSearchHideItem', 'popupSearchMarkItem', 'popupCloseAfterSelect'];
 
                 $.each(data_bool, function(idx, key) {
                     var value = $element.data(key);
@@ -174,7 +174,12 @@
                         return undefined;
                     }
 
-                    return self._items[value];
+                    if ($.isPlainObject(self._items[value])) {
+                        return jQuery.extend({}, self._items[value]);
+                    }
+                    else {
+                        return self._items[value];
+                    }
                 }
             },
 
@@ -231,7 +236,12 @@
                         return undefined;
                     }
 
-                    return self._value[value];
+                    if ($.isPlainObject(self._value[value])) {
+                        return jQuery.extend({}, self._value[value]);
+                    }
+                    else {
+                        return self._value[value];
+                    }
                 },
 
                 clear: function() {
@@ -495,9 +505,12 @@
 
                 set value(value) {
                     if (self._options.multiple) {
+                        self.value.clear();
                         if ($.isArray(value)) {
-                            self.value.clear();
                             self.value.addList(value);
+                        }
+                        else {
+                            self.value.add(value);
                         }
                     }
                     else {
@@ -537,7 +550,7 @@
                         return text.match(regexp);
                     },
 
-                    markup: function(text, search) {
+                    mark: function(text, search) {
                         if ((typeof(text) !== 'string') || (typeof(search) !== 'string') || (search.trim().length === 0)) {
                             return text;
                         }
@@ -584,7 +597,7 @@
 
         popupSearchBar: true, // Show search bar
         popupSearchHideItem: true, // Hide not matched items
-        popupSearchHighlightItem: true, // Highlight match items
+        popupSearchMarkItem: true, // Mark match items
 
         popupCloseAfterSelect: true, // Close popup after select item
 
@@ -631,8 +644,8 @@
             return title;
         },
         onRenderPopupItem: function(selectopus, value, title, search) {
-            if (selectopus.options.popupSearchHighlightItem) {
-                title = selectopus.utils.markup(title, search);
+            if (selectopus.options.popupSearchMarkItem) {
+                title = selectopus.utils.mark(title, search);
             }
 
             return title;

@@ -6,6 +6,9 @@
 .selectopus-items {
     margin: -4px;
 }
+.selectopus-multiple .selectopus-items {
+    margin: -4px -10px;
+}
 .selectopus-item {
     float: left;
     margin: 1px;
