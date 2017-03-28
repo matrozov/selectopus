@@ -28,17 +28,12 @@
     opacity: .4;
 }
 .selectopus-popup {
-    position: absolute;
-    z-index: 100;
-    display: none;
+    display: block;
     padding: 3px;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 }
 .selectopus-popup-input {
     margin-bottom: 6px;
+    border-radius: 0;
 }
 .selectopus-popup-items {
     list-style-type: none;

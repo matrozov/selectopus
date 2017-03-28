@@ -49,8 +49,7 @@
                     .appendTo(self.$root);
 
                 self.$popup = $('<div>')
-                    .addClass('selectopus-popup')
-                    .appendTo('body');
+                    .addClass('selectopus-popup dropdown-menu');
 
                 self.$popupInput = $('<input>')
                     .attr('type', 'text')
@@ -314,10 +313,10 @@
                                     self.$popupHint.text(self.language.translate('popupEmpty'));
                                 }
 
-                                self.$popupHint.show();
+                                self.$popupHint.css('display', 'block');
                             }
                             else {
-                                self.$popupHint.hide();
+                                self.$popupHint.css('display', 'none');
                             }
                         },
 
@@ -394,7 +393,7 @@
                             self.$popup.css('left', bound.left + $('body').scrollLeft());
                             self.$popup.css('top', bound.bottom + $('body').scrollTop());
 
-                            self.$popup.show();
+                            self.$popup.appendTo('body');
 
                             self.$popupItems.scrollTop(0);
                             self.$popupInput.val('').focus();
@@ -407,7 +406,7 @@
                             return;
                         }
 
-                        self.$popup.hide();
+                        self.$popup.detach();
 
                         self.view.popup.items.clear();
 
