@@ -1,0 +1,37 @@
+body {
+    background: #eee;
+    font-family: "Trebuchet MS", sans-serif;
+}
+header.navbar-default {
+    margin-bottom: 0;
+}
+main.jumbotron,
+footer {
+    background-color: #00a0d6;
+    color: #fff;
+}
+main {
+    text-align: center;
+}
+main .logo {
+    height: 80px;
+}
+main .logo-text {
+    margin-top: 10px;
+    font-size: 20px;
+    opacity: .8;
+}
+main .buttons {
+    margin-top: 20px;
+}
+main .buttons .btn {
+    color: #fff;
+    border: 1px solid #fff;
+}
+main .buttons .btn:hover {
+    color: #00a0d6;
+    background-color: #fff;
+}
+footer {
+    height: 100px;
+}

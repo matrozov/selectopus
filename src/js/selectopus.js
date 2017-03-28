@@ -71,9 +71,9 @@
 
             optionsPredefined: function() {
                 var result = {
-                    multiple: self.$element.is('[multiple]'),
                     items: {},
-                    value: []
+                    value: [],
+                    multiple: self.$element.is('[multiple]')
                 };
 
                 self.$element.find('option').each(function() {
@@ -93,11 +93,38 @@
                     }
                 });
 
-                var language = $('html').attr('lang');
+                var language = $element.attr('lang');
 
                 if (self.language.exists(language)) {
                     result.language = language;
                 }
+                else {
+                    language = $('html').attr('lang');
+
+                    if (self.language.exists(language)) {
+                        result.language = language;
+                    }
+                }
+
+                var data_str = ['language', 'url'];
+
+                $.each(data_str, function(idx, key) {
+                    var value = $element.data(key);
+
+                    if ((typeof(value) !== 'undefined') && (value.trim().length > 0)) {
+                        result[key] = value;
+                    }
+                });
+
+                var data_bool = ['multiple', 'popupHideSelected', 'popupSearchHide', 'popupSearchHighlight', 'popupCloseAfterSelect'];
+
+                $.each(data_bool, function(idx, key) {
+                    var value = $element.data(key);
+
+                    if (typeof(value) !== 'undefined') {
+                        result[key] = ((value === 'true') || (value === '1'));
+                    }
+                });
 
                 return result;
             },
@@ -217,6 +244,10 @@
                     },
 
                     onClick: function() {
+                        if (!self._options.multiple) {
+                            return true;
+                        }
+
                         var value = $(this).data('value');
 
                         if (self._options.onUnselect(self.public, value)) {
@@ -291,7 +322,8 @@
 
                         onClick: function() {
                             var value = $(this).data('value');
-                            if (self.value.exists(value)) {
+
+                            if (self._options.multiple && self.value.exists(value)) {
                                 if (self._options.onUnselect(self.public, value)) {
                                     self.value.remove(value);
                                     self.value.save();
@@ -335,6 +367,8 @@
                     },
 
                     open: function() {
+                        $(document).trigger('click');
+
                         self.view.popup.items.createList();
 
                         var bound = self.$root[0].getBoundingClientRect();
@@ -410,6 +444,7 @@
                 },
 
                 set items(value) {
+                    self._options.items = value;
                     self._items = value;
                 },
 
@@ -570,7 +605,7 @@
             return title;
         }
     };
-
+    
     $('body').ready(function() {
         $('.selectopus').selectopus();
     });

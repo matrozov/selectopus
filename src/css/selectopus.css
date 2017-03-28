@@ -7,16 +7,18 @@
     margin: -4px;
 }
 .selectopus-item {
+    float: left;
     margin: 1px;
+    padding: 2px 0;
+    border: transparent;
     user-select: none;
     white-space: nowrap;
 }
 .selectopus-multiple .selectopus-item {
-    float: left;
     background: #eee;
+    padding: 2px 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    padding: 2px 5px;
     cursor: pointer;
 }
 .selectopus-multiple .selectopus-item:after {
