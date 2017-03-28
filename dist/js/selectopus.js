@@ -267,38 +267,40 @@
                         createList: function() {
                             self.view.popup.items.clear();
 
-                            self._items = self._options.onLoad(self.public, self._search);
-                            self._items = self._options.onSearch(self.public, self._search);
+                            self._items = self._options.onLoad(self.public, self._search, function(itemsLoad) {
+                                self._items = itemsLoad;
+                                self._items = self._options.onSearch(self.public, self._search);
 
-                            var items = {};
+                                var items = {};
 
-                            $.each(self._items, function(value, title){
-                                var selected = self.value.exists(value);
+                                $.each(itemsLoad, function(value, title){
+                                    var selected = self.value.exists(value);
 
-                                if (selected && (self._options.popupHideSelected)) {
-                                    return;
-                                }
+                                    if (selected && (self._options.popupHideSelected)) {
+                                        return;
+                                    }
 
-                                items[value] = title;
-                            });
+                                    items[value] = title;
+                                });
 
-                            $.each(items, function(value) {
-                                self.view.popup.items.create(value, self._search);
-                            });
+                                $.each(items, function(value) {
+                                    self.view.popup.items.create(value, self._search);
+                                });
 
-                            if ($.isEmptyObject(items)) {
-                                if (self._search.length > 0) {
-                                    self.$popupHint.text(self.language.translate('popupSearchNotFound'));
+                                if ($.isEmptyObject(items)) {
+                                    if (self._search.length > 0) {
+                                        self.$popupHint.text(self.language.translate('popupSearchNotFound'));
+                                    }
+                                    else {
+                                        self.$popupHint.text(self.language.translate('popupEmpty'));
+                                    }
+
+                                    self.$popupHint.show();
                                 }
                                 else {
-                                    self.$popupHint.text(self.language.translate('popupEmpty'));
+                                    self.$popupHint.hide();
                                 }
-
-                                self.$popupHint.show();
-                            }
-                            else {
-                                self.$popupHint.hide();
-                            }
+                            });
                         },
 
                         create: function(value) {
@@ -551,25 +553,25 @@
 
         url: false, // Url for ajax load, example: http://example.com?text=
 
-        onLoad: function(selectopus, search) {
+        onLoad: function(selectopus, search, callback) {
             if (!selectopus.options.url) {
-                return selectopus.options.items;
+                callback(selectopus.options.items);
+                return;
             }
-
-            var items = {};
 
             try {
-                items = $.getJSON(selectopus.options.url + search);
+                $.getJSON(selectopus.options.url + search, function(items) {
+                    if (!$.isPlainObject(items)) {
+                        callback({});
+                        return;
+                    }
+
+                    callback(items);
+                });
             }
             catch (e) {
-                items = {};
+                callback({});
             }
-
-            if (!$.isPlainObject(items)) {
-                items = {};
-            }
-
-            return items;
         },
         onSearch: function(selectopus, search) {
             if (!selectopus.options.popupSearchHide || (typeof(search) === 'undefined') || (search.trim().length === 0)) {
