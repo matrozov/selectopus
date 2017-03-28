@@ -154,6 +154,14 @@
             },
 
             items: {
+                load: function(callback) {
+                    self._options.onLoad(self.public, self._search, function(items) {
+                        self._items = items;
+
+                        callback();
+                    });
+                },
+
                 exists: function(value) {
                     return typeof(self._items[value]) !== 'undefined';
                 },
@@ -267,40 +275,37 @@
                         createList: function() {
                             self.view.popup.items.clear();
 
-                            self._items = self._options.onLoad(self.public, self._search, function(itemsLoad) {
-                                self._items = itemsLoad;
-                                self._items = self._options.onSearch(self.public, self._search);
+                            self._items = self._options.onSearch(self.public, self._search);
 
-                                var items = {};
+                            var items = {};
 
-                                $.each(itemsLoad, function(value, title){
-                                    var selected = self.value.exists(value);
+                            $.each(self._items, function(value, title){
+                                var selected = self.value.exists(value);
 
-                                    if (selected && (self._options.popupHideSelected)) {
-                                        return;
-                                    }
+                                if (selected && (self._options.popupHideSelected)) {
+                                    return;
+                                }
 
-                                    items[value] = title;
-                                });
+                                items[value] = title;
+                            });
 
-                                $.each(items, function(value) {
-                                    self.view.popup.items.create(value, self._search);
-                                });
+                            $.each(items, function(value) {
+                                self.view.popup.items.create(value, self._search);
+                            });
 
-                                if ($.isEmptyObject(items)) {
-                                    if (self._search.length > 0) {
-                                        self.$popupHint.text(self.language.translate('popupSearchNotFound'));
-                                    }
-                                    else {
-                                        self.$popupHint.text(self.language.translate('popupEmpty'));
-                                    }
-
-                                    self.$popupHint.show();
+                            if ($.isEmptyObject(items)) {
+                                if (self._search.length > 0) {
+                                    self.$popupHint.text(self.language.translate('popupSearchNotFound'));
                                 }
                                 else {
-                                    self.$popupHint.hide();
+                                    self.$popupHint.text(self.language.translate('popupEmpty'));
                                 }
-                            });
+
+                                self.$popupHint.show();
+                            }
+                            else {
+                                self.$popupHint.hide();
+                            }
                         },
 
                         create: function(value) {
@@ -371,18 +376,21 @@
                     open: function() {
                         $(document).trigger('click');
 
-                        self.view.popup.items.createList();
+                        self.items.load(function() {
+                            self.view.popup.items.createList();
 
-                        var bound = self.$root[0].getBoundingClientRect();
+                            var bound = self.$root[0].getBoundingClientRect();
 
-                        self.$popup.css('width', bound.width);
-                        self.$popup.css('left', bound.left);
-                        self.$popup.css('top', bound.bottom);
+                            self.$popup.css('width', bound.width);
+                            self.$popup.css('left', bound.left + $('body').scrollLeft());
+                            self.$popup.css('top', bound.bottom + $('body').scrollTop());
 
-                        self.$popup.show();
+                            self.$popup.show();
 
-                        self.$popupItems.scrollTop(0);
-                        self.$popupInput.val('').focus();
+                            self.$popupItems.scrollTop(0);
+                            self.$popupInput.val('').focus();
+                        });
+
                     },
 
                     close: function() {
@@ -418,12 +426,14 @@
                     onSearch: function() {
                         self._search = self.$popupInput.val().trim();
 
-                        if (self._search.length > 0) {
-                            self.view.popup.items.createList();
-                        }
-                        else {
-                            self.view.popup.items.createList();
-                        }
+                        self.items.load(function() {
+                            if (self._search.length > 0) {
+                                self.view.popup.items.createList();
+                            }
+                            else {
+                                self.view.popup.items.createList();
+                            }
+                        });
                     }
                 }
             },
