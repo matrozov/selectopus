@@ -414,11 +414,23 @@
                     onClose: function(event) {
                         var $target = $(event.target);
 
-                        if (($target[0] === self.$popup[0]) || ($target.parents('.selectopus-popup')[0] === self.$popup[0])) {
+                        if ($target[0] === self.$popup[0]) {
+                            return false;
+                        }
+
+                        var $parent = $target.parents('.selectopus-popup:first');
+
+                        if ($parent.length === 0) {
+                            return true;
+                        }
+
+                        if ($parent[0] === self.$popup[0]) {
                             return false;
                         }
 
                         self.view.popup.close();
+
+                        self._search = '';
 
                         return false;
                     },
