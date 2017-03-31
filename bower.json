@@ -12,6 +12,7 @@
     "authors": [
         "Matrozov Oleg <oleg.matrozov@gmail.com>"
     ],
+    "homepage": "https://matrozov.github.io/selectopus/",
     "repository": {
         "type": "git",
         "url": "git://github.com/matrozov/selectopus"
