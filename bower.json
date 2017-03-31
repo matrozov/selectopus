@@ -17,8 +17,8 @@
         "url": "git://github.com/matrozov/selectopus"
     },
     "main": [
-        "dist/css/selectopus.min.css",
-        "dist/js/selectopus.full.min.js"
+        "dist/css/selectopus.css",
+        "dist/js/selectopus.full.js"
     ],
     "dependencies": {
         "jquery": ">=1.7.0"
