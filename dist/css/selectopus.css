@@ -3,6 +3,9 @@
     height: auto;
     overflow: hidden;
 }
+.selectopus-placeholder {
+    cursor: pointer;
+}
 .selectopus-items {
     margin: -4px;
 }

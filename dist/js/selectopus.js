@@ -12,6 +12,7 @@
             $element: false,
 
             $root: false,
+            $placeholder: false,
             $items: false,
             $popup: false,
             $popupInput: false,
@@ -44,6 +45,10 @@
                 if (self._options.multiple) {
                     self.$root.addClass('selectopus-multiple');
                 }
+
+                self.$placeholder = $('<div>')
+                    .addClass('selectopus-placeholder text-muted')
+                    .appendTo(self.$root);
 
                 self.$items = $('<div>')
                     .addClass('selectopus-items clearfix')
@@ -82,8 +87,7 @@
             optionsPredefined: function() {
                 var result = {
                     items: {},
-                    value: [],
-                    multiple: self.$element.is('[multiple]')
+                    value: []
                 };
 
                 self.$element.find('option').each(function() {
@@ -116,7 +120,27 @@
                     }
                 }
 
-                var data_str = ['language', 'url'];
+                var attr_str = ['placeholder'];
+
+                $.each(attr_str, function(idx, key) {
+                    var value = $element.attr(key);
+
+                    if ((typeof(value) !== 'undefined') && (value.trim().length > 0)) {
+                        result[key] = value;
+                    }
+                });
+
+                var attr_bool = ['required', 'multiple'];
+
+                $.each(attr_bool, function(idx, key) {
+                    var value = $element.attr(key);
+
+                    if (typeof(value) !== 'undefined') {
+                        result[key] = true;
+                    }
+                });
+
+                var data_str = ['language', 'placeholder', 'url'];
 
                 $.each(data_str, function(idx, key) {
                     var value = $element.data(key);
@@ -126,7 +150,7 @@
                     }
                 });
 
-                var data_bool = ['multiple', 'allowCreate', 'popupHideSelected', 'popupSearchBar', 'popupSearchHideItem', 'popupSearchMarkItem', 'popupCloseAfterSelect'];
+                var data_bool = ['required', 'multiple', 'allowCreate', 'popupHideSelected', 'popupSearchBar', 'popupSearchHideItem', 'popupSearchMarkItem', 'popupCloseAfterSelect'];
 
                 $.each(data_bool, function(idx, key) {
                     var value = $element.data(key);
@@ -160,6 +184,14 @@
 
                 reload: function() {
                     self.$popupInput.attr('placeholder', self.language.translate('popupSearchPlaceholder'));
+
+                    var placeholder = self._options.placeholder;
+
+                    if (!placeholder) {
+                        placeholder = self.language.translate('placeholder');
+                    }
+
+                    self.$placeholder.text(placeholder);
                 }
             },
 
@@ -264,9 +296,26 @@
             },
 
             view: {
+                placeholder: {
+                    hide: function() {
+                        self.$placeholder.hide();
+                    },
+
+                    show: function() {
+                        self.$placeholder.show();
+                    }
+                },
+
                 items: {
                     createList: function() {
                         self.view.items.clear();
+
+                        if ($.isEmptyObject(self._value)) {
+                            self.view.placeholder.show();
+                        }
+                        else {
+                            self.view.placeholder.hide();
+                        }
 
                         $.each(self._value, function(value) {
                             self.view.items.create(value);
@@ -379,17 +428,28 @@
                                 self.items.add(value, self._options.onCreateItem(self.public, value));
                             }
 
-                            if (self._options.multiple && self.value.exists(value)) {
-                                self.value.remove(value);
-                                self.value.save();
+                            if (self._options.multiple) {
+                                if (self.value.exists(value)) {
+                                    self.value.remove(value);
+                                    self.value.save();
+                                }
+                                else {
+                                    self.value.add(value);
+                                    self.value.save();
+                                }
                             }
                             else {
-                                if (!self._options.multiple) {
-                                    self.value.clear();
+                                if (self.value.exists(value)) {
+                                    if (!self._options.required) {
+                                        self.value.remove(value);
+                                        self.value.save();
+                                    }
                                 }
-
-                                self.value.add(value);
-                                self.value.save();
+                                else {
+                                    self.value.clear();
+                                    self.value.add(value);
+                                    self.value.save();
+                                }
                             }
 
                             if (self._options.popupCloseAfterSelect) {
@@ -637,6 +697,10 @@
         value: [], // List of values [value1, value2]
 
         language: 'en',
+
+        placeholder: false, // Custom placeholer
+
+        required: false, // Allow empty value
         multiple: false, // Allow multiple select
         allowCreate: true, // Allow create new value
 
