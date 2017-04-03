@@ -16,6 +16,7 @@
             $popup: false,
             $popupInput: false,
             $popupItems: false,
+            $popupCreate: false,
             $popupHint: false,
 
             init: function($element, options) {
@@ -64,6 +65,12 @@
                 self.$popupItems = $('<ul>')
                     .addClass('selectopus-popup-items')
                     .appendTo(self.$popup);
+
+                self.$popupCreate = $('<li>')
+                    .addClass('selectopus-popup-item selectopus-popup-create')
+                    .text('create new item')
+                    .click(self.view.popup.items.onClick)
+                    .appendTo(self.$popupItems);
 
                 self.$popupHint = $('<div>')
                     .addClass('selectopus-popup-hint')
@@ -119,7 +126,7 @@
                     }
                 });
 
-                var data_bool = ['multiple', 'popupHideSelected', 'popupSearchBar', 'popupSearchHideItem', 'popupSearchMarkItem', 'popupCloseAfterSelect'];
+                var data_bool = ['multiple', 'allowCreate', 'popupHideSelected', 'popupSearchBar', 'popupSearchHideItem', 'popupSearchMarkItem', 'popupCloseAfterSelect'];
 
                 $.each(data_bool, function(idx, key) {
                     var value = $element.data(key);
@@ -165,6 +172,11 @@
                     });
                 },
 
+                add: function(value, data) {
+                    self._options.items[value] = data;
+                    self._items[value] = data;
+                },
+
                 exists: function(value) {
                     return typeof(self._items[value]) !== 'undefined';
                 },
@@ -187,7 +199,7 @@
                 keys: function() {
                     var list = [];
 
-                    $.each(self._value, function(value, title){
+                    $.each(self._value, function(value){
                         list.push(value);
                     });
 
@@ -203,7 +215,7 @@
 
                     self.$element.attr('multiple', self._options.multiple);
 
-                    $.each(self._value, function(value, title) {
+                    $.each(self._value, function(value) {
                         $('<option>')
                             .attr('selected', true)
                             .text(value)
@@ -262,9 +274,11 @@
                     },
 
                     create: function(value) {
+                        var data = self.value.get(value);
+
                         $('<span>')
                             .addClass('selectopus-item')
-                            .html(self._options.onRenderItem(self.public, value, self.value.get(value)))
+                            .html(self._options.onRenderItem(self.public, value, self._options.onGetLabel(self.public, data), data))
                             .data('value', value)
                             .click(self.view.items.onClick)
                             .appendTo(self.$items);
@@ -303,14 +317,14 @@
 
                             var items = {};
 
-                            $.each(self._items, function(value, title){
+                            $.each(self._items, function(value, data){
                                 var selected = self.value.exists(value);
 
                                 if (selected && (self._options.popupHideSelected)) {
                                     return;
                                 }
 
-                                items[value] = title;
+                                items[value] = data;
                             });
 
                             $.each(items, function(value) {
@@ -333,7 +347,14 @@
                         },
 
                         create: function(value) {
-                            var content  = self._options.onRenderPopupItem(self.public, value, self.items.get(value), self._search);
+                            var data    = self.items.get(value);
+                            var label   = self._options.onGetLabel(self.public, data);
+
+                            if (self._options.popupSearchMarkItem) {
+                                label = self.public.utils.mark(label, self._search);
+                            }
+
+                            var content = self._options.onRenderPopupItem(self.public, value, label, data);
 
                             var $item = $('<li>')
                                 .addClass('selectopus-popup-item')
@@ -348,11 +369,15 @@
                         },
 
                         clear: function() {
-                            self.$popupItems.empty();
+                            self.$popupItems.find('.selectopus-popup-item:not(.selectopus-popup-create)').remove();
                         },
 
                         onClick: function() {
                             var value = $(this).data('value');
+
+                            if ($(this).is('.selectopus-popup-create')) {
+                                self.items.add(value, self._options.onCreateItem(self.public, value));
+                            }
 
                             if (self._options.multiple && self.value.exists(value)) {
                                 self.value.remove(value);
@@ -409,6 +434,7 @@
 
                             self.$popupItems.scrollTop(0);
                             self.$popupInput.val('').focus();
+                            self.$popupCreate.hide();
                         });
 
                     },
@@ -470,6 +496,24 @@
                                 self.view.popup.items.createList();
                             }
                         });
+
+                        if (self._options.allowCreate && (self._search.length > 0)) {
+                            var data  = self._options.onCreateItem(self.public, self._search);
+                            var label = self._options.onGetLabel(self.public, data);
+
+                            if (self._options.popupSearchMarkItem) {
+                                label = self.public.utils.mark(label, self._search);
+                            }
+
+                            self.$popupCreate
+                                .data('value', self._search)
+                                .html(self._options.onRenderPopupItem(self.public, self._search, label, data));
+
+                            self.$popupCreate.show();
+                        }
+                        else {
+                            self.$popupCreate.hide();
+                        }
                     }
                 }
             },
@@ -589,11 +633,12 @@
     };
 
     $.fn.selectopus.default = {
-        items: {}, // List of allowed items {value1: title1, value2: title2}
+        items: {}, // List of allowed items {value1: data1, value2: data2}
         value: [], // List of values [value1, value2]
 
         language: 'en',
         multiple: false, // Allow multiple select
+        allowCreate: true, // Allow create new value
 
         popupHideSelected: false, // Hide selected items (or only hightlite by default)
 
@@ -632,25 +677,27 @@
 
             var items = {};
 
-            $.each(selectopus.items, function(value, title) {
-                if (!selectopus.utils.match(title, search)) {
+            $.each(selectopus.items, function(value, data) {
+                if (!selectopus.utils.match(selectopus.options.onGetLabel(selectopus, data), search)) {
                     return;
                 }
 
-                items[value] = title;
+                items[value] = data;
             });
 
             return items;
         },
-        onRenderItem: function(selectopus, value, title) {
-            return title;
+        onGetLabel: function(selectopus, data) {
+            return data;
         },
-        onRenderPopupItem: function(selectopus, value, title, search) {
-            if (selectopus.options.popupSearchMarkItem) {
-                title = selectopus.utils.mark(title, search);
-            }
-
-            return title;
+        onRenderItem: function(selectopus, value, label, data) {
+            return label;
+        },
+        onRenderPopupItem: function(selectopus, value, label, data) {
+            return label;
+        },
+        onCreateItem: function(selectopus, label) {
+            return label;
         }
     };
     

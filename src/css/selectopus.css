@@ -47,6 +47,7 @@
     max-height: 160px;
 }
 .selectopus-popup-item {
+    position: relative;
     cursor: pointer;
     padding: 2px 5px;
 }
@@ -58,6 +59,18 @@
 }
 .selectopus-popup-item.selectopus-popup-item-selected:hover {
     background: #cde;
+}
+.selectopus-popup-create {
+    background: #fcf8e3;
+    border-bottom: 1px solid #ddd;
+}
+.selectopus-popup-create:hover {
+    background: #dcddc6;
+}
+.selectopus-popup-create:before {
+    content: "\2b";
+    margin-right: 2px;
+    font-weight: bold;
 }
 .selectopus-popup-hint {
     display: none;

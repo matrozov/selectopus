@@ -65,7 +65,7 @@
 
             <a name="example"></a><h2>Example</h2>
 
-            <h3>Single and multiple mode support</h3>
+            <h3>Single, multiple and creation mode support</h3>
 
             <div class="row">
                 <div class="col-sm-4">
@@ -75,7 +75,7 @@
                     <p>Multiple value mode</p>
                 </div>
                 <div class="col-sm-4">
-                    <p>Inline multiple value mode</p>
+                    <p>Create new items</p>
                 </div>
             </div>
             <div class="row">
@@ -99,7 +99,11 @@
                 </div>
                 <div class="col-sm-4">
                     <p>
-
+                        <select id="example-mode-3" class="selectopus" data-allowCreate multiple>
+                            <option selected>value 1</option>
+                            <option>value 2</option>
+                            <option selected>value 3</option>
+                        </select>
                     </p>
                 </div>
             </div>
@@ -215,6 +219,7 @@ $('select').selectopus({
 
     <a href="#options-language">language</a>: 'en',
     <a href="#options-multiple">multiple</a>: false,
+    <a href="#options-allowCreate">allowCreate</a>: false,
 
     <a href="#options-popupHideSelected">popupHideSelected</a>: false,
     <a href="#options-popupSearchBar">popupSearchBar</a>: true,
@@ -226,8 +231,10 @@ $('select').selectopus({
 
     <a href="#options-onLoad">onLoad</a>: function(selectopus, search, callback) {},
     <a href="#options-onSearch">onSearch</a>: function(selectopus, search) {},
-    <a href="#options-onRenderItem">onRenderItem</a>: function(selectopus, value, title) {},
-    <a href="#options-onRenderPopupItem">onRenderPopupItem</a>: function(selectopus, value, title, search) {}
+    <a href="#options-onGetLabel">onGetLabel</a>: function(selectopus, data) {},
+    <a href="#options-onRenderItem">onRenderItem</a>: function(selectopus, value, label, data) {},
+    <a href="#options-onRenderPopupItem">onRenderPopupItem</a>: function(selectopus, value, label, data) {}
+    <a href="#options-onCreateItem">onCreateItem</a>: function(selectopus, label) {}
 });</pre>
 
             <table class="table table-border">
@@ -260,6 +267,12 @@ $('select').selectopus({
                     <td>bool</td>
                     <td>false</td>
                     <td>Multiple mode</td>
+                </tr>
+                <tr>
+                    <td><a name="options-allowCreate"></a>allowCreate</td>
+                    <td>bool</td>
+                    <td>false</td>
+                    <td>Allow create new item from search</td>
                 </tr>
                 <tr>
                     <td><a name="options-popupHideSelected"></a>popupHideSelected</td>
@@ -318,30 +331,28 @@ $('select').selectopus({
                     <td>Find and match search</td>
                 </tr>
                 <tr>
-                    <td><a name="options-onSelect"></a>onSelect (selectopus, value)</td>
+                    <td><a name="options-onGetLabel"></a>onGetLabel (selectopus, data)</td>
                     <td>closure</td>
                     <td></td>
-                    <td>Call, when value selected</td>
+                    <td>Get label from item data</td>
                 </tr>
                 <tr>
-                    <td><a name="options-onUnselect"></a>onUnselect (selectopus, value)</td>
-                    <td>closure</td>
-                    <td></td>
-                    <td>Call, when value unselected
-                        <div class="text-muted">This closure does'nt call, when value unselected by select another value</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><a name="options-onRenderItem"></a>onRenderItem (selectopus, value, title)</td>
+                    <td><a name="options-onRenderItem"></a>onRenderItem (selectopus, value, label, data)</td>
                     <td>closure</td>
                     <td></td>
                     <td>Render item</td>
                 </tr>
                 <tr>
-                    <td><a name="options-onRenderPopupItem"></a>onRenderPopupItem (selectopus, value, title)</td>
+                    <td><a name="options-onRenderPopupItem"></a>onRenderPopupItem (selectopus, value, label, data)</td>
                     <td>closure</td>
                     <td></td>
                     <td>Render popup item</td>
+                </tr>
+                <tr>
+                    <td><a name="options-onCreateItem"></a>onCreateItem (selectopus, label)</td>
+                    <td>closure</td>
+                    <td></td>
+                    <td>Create item data from label</td>
                 </tr>
             </table>
 
@@ -447,9 +458,6 @@ $('select').selectopus().<a href="#function-utils-mark">utils.mark</a>(text, sea
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
         <script src="js/selectopus.full.min.js"></script>
-        <!--<script src="../src/js/selectopus.js"></script>
-        <script src="../src/js/i18n/en.js"></script>
-        <script src="../src/js/i18n/ru.js"></script>-->
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#example-custom-1').selectopus({
@@ -472,15 +480,14 @@ $('select').selectopus().<a href="#function-utils-mark">utils.mark</a>(text, sea
                     },
                     value: [0, 2],
                     multiple: true,
-                    onRenderItem: function(selectopus, value, title) {
-                        return '<span  style="color: ' + title.color + '"><i class="' + title.icon + '"></i></span>';
+                    onGetLabel: function(selectopus, data) {
+                        return data.label;
                     },
-                    onRenderPopupItem: function(selectopus, value, title, search) {
-                        if (selectopus.options.popupSearchMarkItem) {
-                            title.label = selectopus.utils.mark(title.label, search);
-                        }
-
-                        return '<i class="' + title.icon + '"></i>&nbsp;' + title.label;
+                    onRenderItem: function(selectopus, value, label, data) {
+                        return '<i class="' + data.icon + '" style="color: ' + data.color + '"></i>';
+                    },
+                    onRenderPopupItem: function(selectopus, value, label, data) {
+                        return '<i class="' + data.icon + '" style="color: ' + data.color + '"></i>&nbsp;' + label;
                     }
                 });
             });
