@@ -14,6 +14,7 @@
             $root: false,
             $placeholder: false,
             $items: false,
+            $clear: false,
             $popup: false,
             $popupInput: false,
             $popupItems: false,
@@ -53,6 +54,16 @@
                 self.$items = $('<div>')
                     .addClass('selectopus-items clearfix')
                     .appendTo(self.$root);
+
+                self.$clear = $('<div>')
+                    .addClass('selectopus-clear')
+                    .html('&#x2716;')
+                    .click(self.view.items.onClear)
+                    .appendTo(self.$root);
+
+                if (self._options.required) {
+                    self.$clear.hide();
+                }
 
                 self.$popup = $('<div>')
                     .addClass('selectopus-popup dropdown-menu');
@@ -296,25 +307,20 @@
             },
 
             view: {
-                placeholder: {
-                    hide: function() {
-                        self.$placeholder.hide();
-                    },
-
-                    show: function() {
-                        self.$placeholder.show();
-                    }
-                },
-
                 items: {
                     createList: function() {
                         self.view.items.clear();
 
                         if ($.isEmptyObject(self._value)) {
-                            self.view.placeholder.show();
+                            self.$placeholder.show();
+                            self.$clear.hide();
                         }
                         else {
-                            self.view.placeholder.hide();
+                            self.$placeholder.hide();
+
+                            if (!self._options.required) {
+                                self.$clear.show();
+                            }
                         }
 
                         $.each(self._value, function(value) {
@@ -335,6 +341,13 @@
 
                     clear: function() {
                         self.$items.empty();
+                    },
+
+                    onClear: function() {
+                        self.value.clear();
+                        self.view.items.createList();
+
+                        return false;
                     },
 
                     onClick: function() {

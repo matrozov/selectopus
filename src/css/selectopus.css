@@ -1,4 +1,5 @@
 .selectopus-root {
+    position: relative;
     min-height: 34px;
     height: auto;
     overflow: hidden;
@@ -32,6 +33,18 @@
     margin-left: 2px;
     content: "\d7";
     opacity: .4;
+}
+.selectopus-clear {
+    position: absolute;
+    top: 50%;
+    right: 9px;
+    margin-top: -8px;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
 }
 .selectopus-popup {
     display: block;
