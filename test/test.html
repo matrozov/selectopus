@@ -9,18 +9,33 @@
 
         <link href="bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="../src/css/selectopus.css">
+
     </head>
     <body style="padding: 50px; width: 900px; margin: 0 auto;">
-        <select class="selectopus">
-            <option>test 1</option>
-            <option>test 2</option>
-            <option>test 3</option>
-        </select>
+        <select class="selectopus2" multiple></select>
+
+        <button id="clk">Click me</button>
 
         <script src="jquery.min.js"></script>
         <script src="bootstrap.min.js"></script>
         <script src="../src/js/selectopus.js"></script>
         <script src="../src/js/i18n/en.js"></script>
         <script src="../src/js/i18n/ru.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                $('.selectopus2').selectopus({
+                    values: {
+                        'bla': 'bla-title',
+                        'bla2': 'bla2-title'
+                    }
+                });
+
+
+                $('#clk').click(function() {
+                    $('select').selectopus().values = {'vla':'vbbbb'};
+                });
+            });
+        </script>
     </body>
 </html>

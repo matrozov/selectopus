@@ -215,7 +215,7 @@
             <pre>
 $('select').selectopus({
     <a href="#options-items">items</a>: {},
-    <a href="#options-value">value</a>: [],
+    <a href="#options-values">values</a>: [],
 
     <a href="#options-language">language</a>: 'en',
 
@@ -255,10 +255,10 @@ $('select').selectopus({
                     <td>Items</td>
                 </tr>
                 <tr>
-                    <td><a name="options-value"></a>value</td>
-                    <td>array</td>
+                    <td><a name="options-values"></a>values</td>
+                    <td>array | object</td>
                     <td>[]</td>
-                    <td>Value or list of values</td>
+                    <td>Array with list of values or object (value->label/data) with value and his label/data</td>
                 </tr>
                 <tr>
                     <td><a name="options-language"></a>language</td>
@@ -404,7 +404,7 @@ $('select').on('<a href="#events-change">selectopus-change</a>', function() {});
 $('select').selectopus().<a href="#property-options">options</a>;
 $('select').selectopus().<a href="#property-language">language</a>;
 $('select').selectopus().<a href="#property-items">items</a>;
-$('select').selectopus().<a href="#property-value">value</a>;
+$('select').selectopus().<a href="#property-values">values</a>;
 $('select').selectopus().<a href="#property-popup-isOpened">popup.isOpened</a>;</pre>
 
             <table class="table table-border">
@@ -425,8 +425,8 @@ $('select').selectopus().<a href="#property-popup-isOpened">popup.isOpened</a>;<
                     <td>Set/Get items</td>
                 </tr>
                 <tr>
-                    <td><a name="property-value"></a>value</td>
-                    <td>Set/Get current value(s)</td>
+                    <td><a name="property-values"></a>values</td>
+                    <td>Set/Get current values</td>
                 </tr>
                 <tr>
                     <td><a name="property-popup-isOpened"></a>popup.isOpened</td>

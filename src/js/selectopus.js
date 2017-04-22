@@ -2,7 +2,7 @@
     function Selectopus($element, options) {
         var self = {
             _items: {},
-            _value: {},
+            _values: {},
 
             _languages: {},
             _options: {},
@@ -32,7 +32,7 @@
 
                 self.public.language = self._options.language;
                 self.public.items    = self._options.items;
-                self.public.value    = self._options.value;
+                self.public.values   = self._options.values;
 
                 self.view.items.createList();
             },
@@ -98,7 +98,7 @@
             optionsPredefined: function() {
                 var result = {
                     items: {},
-                    value: []
+                    values: []
                 };
 
                 self.$element.find('option').each(function() {
@@ -106,14 +106,18 @@
 
                     var value = $option.prop('value');
 
+                    if (typeof(value) === 'undefined') {
+                        value = $option.text();
+                    }
+
                     result.items[value] = $option.text();
 
                     if ($option.prop('selected')) {
                         if (result.multiple) {
-                            result.value.push(value);
+                            result.values.push(value);
                         }
                         else {
-                            result.value = value;
+                            result.values = [value];
                         }
                     }
                 });
@@ -238,11 +242,11 @@
                 }
             },
 
-            value: {
+            values: {
                 keys: function() {
                     var list = [];
 
-                    $.each(self._value, function(value){
+                    $.each(self._values, function(value){
                         list.push(value);
                     });
 
@@ -250,7 +254,7 @@
                 },
 
                 exists: function(value) {
-                    return typeof(self._value[value]) !== 'undefined';
+                    return typeof(self._values[value]) !== 'undefined';
                 },
 
                 save: function() {
@@ -258,7 +262,7 @@
 
                     self.$element.attr('multiple', self._options.multiple);
 
-                    $.each(self._value, function(value) {
+                    $.each(self._values, function(value) {
                         $('<option>')
                             .attr('selected', true)
                             .text(value)
@@ -267,13 +271,25 @@
                 },
 
                 addList: function(values) {
-                    $.each(values, function (key, value) {
-                        self.value.add(value);
-                    });
+                    if ($.isArray(values)) {
+                        $.each(values, function(key, value) {
+                            self.values.add(value);
+                        });
+                    }
+                    else {
+                        $.each(values, function(key, value) {
+                            self.values.add(key, value);
+                        });
+                    }
                 },
 
-                add: function(value) {
-                    self._value[value] = self.items.exists(value) ? self.items.get(value) : self.value.get(value);
+                add: function(value, data) {
+                    if (typeof(data) !== 'undefined') {
+                        self._values[value] = data;
+                    }
+                    else {
+                        self._values[value] = self.items.exists(value) ? self.items.get(value) : self.values.get(value);
+                    }
 
                     self.$element.trigger('selectopus-select', value);
                     self.$element.trigger('selectopus-change');
@@ -281,7 +297,7 @@
                 },
 
                 remove: function(value) {
-                    delete self._value[value];
+                    delete self._values[value];
 
                     self.$element.trigger('selectopus-unselect', value);
                     self.$element.trigger('selectopus-change');
@@ -289,20 +305,20 @@
                 },
 
                 get: function(value) {
-                    if (!self.value.exists(value)) {
+                    if (!self.values.exists(value)) {
                         return undefined;
                     }
 
-                    if ($.isPlainObject(self._value[value])) {
-                        return jQuery.extend({}, self._value[value]);
+                    if ($.isPlainObject(self._values[value])) {
+                        return jQuery.extend({}, self._values[value]);
                     }
                     else {
-                        return self._value[value];
+                        return self._values[value];
                     }
                 },
 
                 clear: function() {
-                    self._value = {};
+                    self._values = {};
                 }
             },
 
@@ -311,7 +327,7 @@
                     createList: function() {
                         self.view.items.clear();
 
-                        if ($.isEmptyObject(self._value)) {
+                        if ($.isEmptyObject(self._values)) {
                             self.$placeholder.show();
                             self.$clear.hide();
                         }
@@ -323,13 +339,13 @@
                             }
                         }
 
-                        $.each(self._value, function(value) {
+                        $.each(self._values, function(value) {
                             self.view.items.create(value);
                         });
                     },
 
                     create: function(value) {
-                        var data = self.value.get(value);
+                        var data = self.values.get(value);
 
                         $('<span>')
                             .addClass('selectopus-item')
@@ -344,7 +360,7 @@
                     },
 
                     onClear: function() {
-                        self.value.clear();
+                        self.values.clear();
                         self.view.items.createList();
 
                         return false;
@@ -357,9 +373,9 @@
 
                         var value = $(this).data('value');
 
-                        if (self.value.exists(value)) {
-                            self.value.remove(value);
-                            self.value.save();
+                        if (self.values.exists(value)) {
+                            self.values.remove(value);
+                            self.values.save();
 
                             self.view.items.createList();
                         }
@@ -380,7 +396,7 @@
                             var items = {};
 
                             $.each(self._items, function(value, data){
-                                var selected = self.value.exists(value);
+                                var selected = self.values.exists(value);
 
                                 if (selected && (self._options.popupHideSelected)) {
                                     return;
@@ -425,7 +441,7 @@
                                 .click(self.view.popup.items.onClick)
                                 .appendTo(self.$popupItems);
 
-                            if (self.value.exists(value)) {
+                            if (self.values.exists(value)) {
                                 $item.addClass('selectopus-popup-item-selected');
                             }
                         },
@@ -442,26 +458,26 @@
                             }
 
                             if (self._options.multiple) {
-                                if (self.value.exists(value)) {
-                                    self.value.remove(value);
-                                    self.value.save();
+                                if (self.values.exists(value)) {
+                                    self.values.remove(value);
+                                    self.values.save();
                                 }
                                 else {
-                                    self.value.add(value);
-                                    self.value.save();
+                                    self.values.add(value);
+                                    self.values.save();
                                 }
                             }
                             else {
-                                if (self.value.exists(value)) {
+                                if (self.values.exists(value)) {
                                     if (!self._options.required) {
-                                        self.value.remove(value);
-                                        self.value.save();
+                                        self.values.remove(value);
+                                        self.values.save();
                                     }
                                 }
                                 else {
-                                    self.value.clear();
-                                    self.value.add(value);
-                                    self.value.save();
+                                    self.values.clear();
+                                    self.values.add(value);
+                                    self.values.save();
                                 }
                             }
 
@@ -613,31 +629,23 @@
                     self._items = value;
                 },
 
-                get value() {
+                get values() {
                     if (self._options.multiple) {
-                        return self.value.keys();
+                        return self.values.keys();
                     }
                     else {
-                        return self.value.keys()[0];
+                        return self.values.keys()[0];
                     }
                 },
 
-                set value(value) {
-                    if (self._options.multiple) {
-                        self.value.clear();
-                        if ($.isArray(value)) {
-                            self.value.addList(value);
-                        }
-                        else {
-                            self.value.add(value);
-                        }
-                    }
-                    else {
-                        self.value.addList([value]);
-                    }
+                set values(values) {
+                    self.values.clear();
 
-                    self.value.save();
+                    self.values.addList(values);
+
+                    self.values.save();
                     self.view.items.createList();
+
                 },
 
                 popup: {
@@ -707,7 +715,7 @@
 
     $.fn.selectopus.default = {
         items: {}, // List of allowed items {value1: data1, value2: data2}
-        value: [], // List of values [value1, value2]
+        values: [], // List of values [value1, value2]
 
         language: 'en',
 
