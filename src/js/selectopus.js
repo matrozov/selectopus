@@ -630,12 +630,7 @@
                 },
 
                 get values() {
-                    if (self._options.multiple) {
-                        return self.values.keys();
-                    }
-                    else {
-                        return self.values.keys()[0];
-                    }
+                    return self.values.keys();
                 },
 
                 set values(values) {
