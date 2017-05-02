@@ -101,27 +101,6 @@
                     values: []
                 };
 
-                self.$element.find('option').each(function() {
-                    var $option = $(this);
-
-                    var value = $option.prop('value');
-
-                    if (typeof(value) === 'undefined') {
-                        value = $option.text();
-                    }
-
-                    result.items[value] = $option.text();
-
-                    if ($option.prop('selected')) {
-                        if (result.multiple) {
-                            result.values.push(value);
-                        }
-                        else {
-                            result.values = [value];
-                        }
-                    }
-                });
-
                 var language = $element.attr('lang');
 
                 if (self.language.exists(language)) {
@@ -172,6 +151,27 @@
 
                     if (typeof(value) !== 'undefined') {
                         result[key] = ((value === 'true') || (value === '1'));
+                    }
+                });
+
+                self.$element.find('option').each(function() {
+                    var $option = $(this);
+
+                    var value = $option.prop('value');
+
+                    if (typeof(value) === 'undefined') {
+                        value = $option.text();
+                    }
+
+                    result.items[value] = $option.text();
+
+                    if ($option.prop('selected')) {
+                        if (result.multiple) {
+                            result.values.push(value);
+                        }
+                        else {
+                            result.values = [value];
+                        }
                     }
                 });
 
@@ -718,7 +718,7 @@
 
         required: false, // Allow empty value
         multiple: false, // Allow multiple select
-        allowCreate: true, // Allow create new value
+        allowCreate: false, // Allow create new value
 
         popupHideSelected: false, // Hide selected items (or only hightlite by default)
 
