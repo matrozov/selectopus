@@ -12,7 +12,7 @@
 
     </head>
     <body style="padding: 50px; width: 900px; margin: 0 auto;">
-        <select class="selectopus2" multiple></select>
+        <select class="selectopus2"  style="width: 100px; height: 200px;"></select>
 
         <button id="clk">Click me</button>
 
@@ -25,10 +25,18 @@
         <script>
             $(document).ready(function() {
                 $('.selectopus2').selectopus({
+                    items: {
+                        'bla': 'bla-title',
+                        'bla2': 'bla2-title',
+                        'bla3': 'bla3-title',
+                        'bla4': 'bla4-title'
+                    },
                     values: {
                         'bla': 'bla-title',
                         'bla2': 'bla2-title'
-                    }
+                    },
+
+                    multiple: true
                 });
 
 

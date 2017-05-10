@@ -92,7 +92,15 @@
                     .addClass('selectopus-popup-hint')
                     .appendTo(self.$popup);
 
-                $(document).click(self.view.popup.onClose);
+                $(document).on('click', self.view.popup.onClose);
+            },
+
+            remove: function() {
+                $(document).off('click', self.view.popup.onClose);
+
+                self.$root.remove();
+
+                self.$element.removeData('selectopus');
             },
 
             optionsPredefined: function() {
@@ -178,6 +186,36 @@
                 return result;
             },
 
+            save: function() {
+                self.$element.empty();
+
+                self.$element.attr('multiple', self._options.multiple);
+
+                $.each(self._items, function(value, data) {
+                    var title = self._options.onGetLabel(self.public, data);
+
+                    $('<option>')
+                        .attr('selected', self.values.exists(value))
+                        .attr('value', value)
+                        .text(title)
+                        .appendTo(self.$element);
+                });
+
+                $.each(self._values, function(value, data) {
+                    if (self.items.exists(value)) {
+                        return;
+                    }
+
+                    var title = self._options.onGetLabel(self.public, data);
+
+                    $('<option>')
+                        .attr('selected', true)
+                        .attr('value', value)
+                        .text(title)
+                        .appendTo(self.$element);
+                });
+            },
+
             language: {
                 exists: function(value) {
                     return typeof(self._languages[value]) !== 'undefined';
@@ -255,19 +293,6 @@
 
                 exists: function(value) {
                     return typeof(self._values[value]) !== 'undefined';
-                },
-
-                save: function() {
-                    self.$element.empty();
-
-                    self.$element.attr('multiple', self._options.multiple);
-
-                    $.each(self._values, function(value) {
-                        $('<option>')
-                            .attr('selected', true)
-                            .text(value)
-                            .appendTo(self.$element);
-                    });
                 },
 
                 addList: function(values) {
@@ -362,6 +387,7 @@
                     onClear: function() {
                         self.values.clear();
                         self.view.items.createList();
+                        self.view.popup.close();
 
                         return false;
                     },
@@ -375,7 +401,7 @@
 
                         if (self.values.exists(value)) {
                             self.values.remove(value);
-                            self.values.save();
+                            self.save();
 
                             self.view.items.createList();
                         }
@@ -460,24 +486,24 @@
                             if (self._options.multiple) {
                                 if (self.values.exists(value)) {
                                     self.values.remove(value);
-                                    self.values.save();
+                                    self.save();
                                 }
                                 else {
                                     self.values.add(value);
-                                    self.values.save();
+                                    self.save();
                                 }
                             }
                             else {
                                 if (self.values.exists(value)) {
                                     if (!self._options.required) {
                                         self.values.remove(value);
-                                        self.values.save();
+                                        self.save();
                                     }
                                 }
                                 else {
                                     self.values.clear();
                                     self.values.add(value);
-                                    self.values.save();
+                                    self.save();
                                 }
                             }
 
@@ -514,10 +540,11 @@
                             self.view.popup.items.createList();
 
                             var bound = self.$root[0].getBoundingClientRect();
+                            var $body = $('body');
 
                             self.$popup.css('width', bound.width);
-                            self.$popup.css('left', bound.left + $('body').scrollLeft());
-                            self.$popup.css('top', bound.bottom + $('body').scrollTop());
+                            self.$popup.css('left', bound.left + $body.scrollLeft());
+                            self.$popup.css('top', bound.bottom + $body.scrollTop());
 
                             self.$popup.appendTo('body');
 
@@ -638,7 +665,7 @@
 
                     self.values.addList(values);
 
-                    self.values.save();
+                    self.save();
                     self.view.items.createList();
 
                 },
@@ -659,6 +686,10 @@
                     close: function() {
                         self.view.popup.close();
                     }
+                },
+
+                remove: function() {
+                    self.remove();
                 },
 
                 utils: {
