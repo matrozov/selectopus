@@ -540,11 +540,11 @@
                             self.view.popup.items.createList();
 
                             var bound = self.$root[0].getBoundingClientRect();
-                            var $body = $('body');
+                            var $document = $(document);
 
                             self.$popup.css('width', bound.width);
-                            self.$popup.css('left', bound.left + $body.scrollLeft());
-                            self.$popup.css('top', bound.bottom + $body.scrollTop());
+                            self.$popup.css('left', bound.left + $document.scrollLeft());
+                            self.$popup.css('top', bound.bottom + $document.scrollTop());
 
                             self.$popup.appendTo('body');
 
@@ -667,7 +667,6 @@
 
                     self.save();
                     self.view.items.createList();
-
                 },
 
                 popup: {
@@ -818,6 +817,7 @@
 
     $.fn.selectopus.languages = {};
 })(jQuery);
+
 (function($) {
     $.fn.selectopus.languages.en = {
         placeholder: 'Click here to select items...',
